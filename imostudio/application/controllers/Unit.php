@@ -17,6 +17,9 @@ class Unit extends CI_Controller {
 	}
 
 	function add(){
-		
+
+		$this->load->view('admin/common/header');
+		$this->load->view('admin/add_unit');
+		$this->load->view('admin/common/footer');
 	}
 }
