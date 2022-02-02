@@ -45,7 +45,7 @@
 						<div class="account-wrapper">
 							<h3 class="account-title">Login</h3>
 							<p class="account-subtitle">Access to our dashboard</p>
-							
+							<span id="message_id"><?php echo $this->session->flashdata('message'); ?></span>
 							<!-- Account Form -->
 							<form action="<?= base_url('login/check/'); ?>" method="post">
 								<div class="form-group">
