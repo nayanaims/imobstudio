@@ -18,7 +18,7 @@ class Admin extends CI_Controller
         $this->load->view('admin/admin_list');
         $this->load->view('admin/common/footer');
     }
-
+ 
     function add()
     {
         $this->load->view('admin/common/header');
@@ -59,6 +59,11 @@ class Admin extends CI_Controller
                 'rules' => 'trim|required|min_length[6]'
             ) ,
             array(
+                'field' => 'confirm_pass',
+                'label' => 'Confirm Password',
+                'rules' => 'trim|required|min_length[6]|matches[admin_pass]'
+            ) ,
+            array(
                 'field' => 'role',
                 'label' => 'Role',
                 'rules' => 'required'
@@ -79,6 +84,7 @@ class Admin extends CI_Controller
                 'firstname' => $this->input->post('firstname') ,
                 'lastname' => $this->input->post('lastname') ,
                 'admin_pass' => sha1($this->input->post('admin_pass')) ,
+                'confirm_pass' => sha1($this->input->post('confirm_pass')) ,
                 'role' => $this->input->post('role') ,
                 'admin_id' => $this->input->post('admin_id') ,
                 'phone' => $this->input->post('phone')

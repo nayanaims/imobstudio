@@ -70,10 +70,17 @@
                            
                         </div>
                         <div class="col-xl-6">
+
                            <div class="form-group row">
                               <label class="col-lg-3 col-form-label">Email</label>
                               <div class="col-lg-9">
                                  <input type="text" class="form-control admin_id" name="admin_id" value="<?php echo set_value('admin_id'); ?>">
+                              </div>
+                           </div>
+                            <div class="form-group row">
+                              <label class="col-lg-3 col-form-label">Confirm Password</label>
+                              <div class="col-lg-9">
+                                 <input type="password" name="confirm_pass"  class="form-control" min="6" value="<?php echo set_value('confirm_pass'); ?>">
                               </div>
                            </div>
                            <div class="form-group row">
