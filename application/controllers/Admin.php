@@ -12,12 +12,14 @@ class Admin extends CI_Controller
         checkAuth();
         $this->load->model('Admin_model');
         $this->load->model('Common_model');
+        
     }
 
     public function index()
     {
+        $data['tabletile'] = array('Email','Name','Phone','Role','Created Date','Modified Date');
         $this->load->view('admin/common/header');
-        $this->load->view('admin/admin_list');
+        $this->load->view('admin/admin_list',$data);
         $this->load->view('admin/common/footer');
     }
  
@@ -132,7 +134,7 @@ class Admin extends CI_Controller
             foreach($response as $result){
                 $data[] = array(
                 'Email'=> $result['admin_id'],
-                'Name' => $result['firstname'] . ' ' . @$result['firstname'],
+                'Name' => $result['firstname'] . ' ' . @$result['lastname'],
                 'Phone' => $result['phone'],
                 'Role' => $result['role'],
                 'Created Date' => $result['created_date'],

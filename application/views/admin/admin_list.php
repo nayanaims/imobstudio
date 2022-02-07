@@ -14,19 +14,20 @@
 		</div>
 	</div>
 	<span id="message_id"><?php echo $this->session->flashdata('message'); ?></span>		
-
+  
 	<div class="row">
 		<div class="col-md-12">
 			<div class="">  <!-- table-responsive -->
 				<table id="admin_lists" class=" table table-stripped mb-0 admin_lists" >
 					<thead>
 						<tr>
-                            <th>Email</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Role</th>
-                            <th>Created Date </th>
-                            <th>Modified Date</th> 
+							<?php 
+							if(!empty($tabletile)) :
+							  foreach($tabletile as $title) : ?>
+								<th><?= $title; ?></th>
+							<?php 
+							   endforeach;
+						     endif; ?>
 						</tr>
 					</thead>
 					<tbody>						
