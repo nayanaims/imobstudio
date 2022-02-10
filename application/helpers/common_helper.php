@@ -54,7 +54,7 @@ if(!function_exists('header_menu')){
          
         );   
     } 
-    else if($ci->session->userdata('role') == getSuperEmployeeUserType()){
+    else if($ci->session->userdata('role') == getSuperAdminUserType()){
        $menu = array(
         'Dashbord' => $base . "dashboard",
         'Admin Management' => array(
@@ -76,8 +76,8 @@ if(!function_exists('header_menu')){
         return $menu;                                                                                                                 
     }
 }
-if(!function_exists('getSuperEmployeeUserType')){
-    function getSuperEmployeeUserType(){
+if(!function_exists('getSuperAdminUserType')){
+    function getSuperAdminUserType(){
         return 'super-admin';
     }
 }
@@ -99,6 +99,16 @@ if(!function_exists('meta_data')){
         $ci->db->where(array('user_id' =>$user_id));
         $meta = $ci->db->get()->result_array();
         return $meta;                                                                                                                 
+    }
+}
+if(!function_exists('url_encode')){
+    function url_encode($val){
+        return urlencode(base64_encode(trim($val)));
+    }
+}
+if(!function_exists('url_decode')){
+    function url_decode($val){
+        return urldecode(base64_decode($val));
     }
 }
 
