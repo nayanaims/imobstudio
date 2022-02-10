@@ -30,8 +30,8 @@ class Admin extends CI_Controller
         $this->load->view('admin/common/footer');
     }
 
-    function save()
-    {
+
+    function validation($id = null){
 
         $rules = array(
             array(
@@ -53,11 +53,6 @@ class Admin extends CI_Controller
                 )
             ) ,
             array(
-                'field' => 'admin_id',
-                'label' => 'Email Address',
-                'rules' => 'trim|required|valid_email|is_unique[imo_admin.admin_id]'
-            ) ,
-            array(
                 'field' => 'admin_pass',
                 'label' => 'Password',
                 'rules' => 'trim|required|min_length[6]'
@@ -73,6 +68,28 @@ class Admin extends CI_Controller
                 'rules' => 'required'
             )
         );
+        
+     
+        if($id == ''){
+             $emailrule =  array(
+                'field' => 'admin_id',
+                'label' => 'Email Address',
+                'rules' => 'trim|required|valid_email|is_unique[imo_admin.admin_id]'
+            );
+            array_push($rules,$emailrule); 
+        }  
+        
+        return $rules;  
+         
+
+    }
+
+  
+
+    function save()
+    {
+       
+        $rules = $this->validation();
 
         $this->form_validation->set_rules($rules);
 
@@ -80,7 +97,7 @@ class Admin extends CI_Controller
         {
             $this->load->view('admin/common/header');
             $this->load->view('admin/add_admin');
-            $this->load->view('admin/common/footer');
+            $this->load->view('admin/common/footer'); 
         }
         else
         {
@@ -94,47 +111,82 @@ class Admin extends CI_Controller
                 'phone' => $this->input->post('phone')
             );
 
-            if($this->input->post('id')){
-                $edit_id = url_decode($this->input->post('id'));
-                $where = array(
-                     'id' =>  $edit_id
-                );
-                $this->Common_model->update_batch($data,$this->admin_tbl,$where);
+            $status = $this->Common_model->Insert_batch($data,$this->admin_tbl);
+
+            if ($status == 1)
+            {
                 $msg = get_message('Successfully saved!!', '0');
                 $this->session->set_flashdata('message', $msg);
-                redirect(base_url() . 'admin/edit?id=' . url_encode($edit_id));
             }
-            else{
-           
-                $status = $this->Common_model->Insert_batch($data,$this->admin_tbl);
-
-                if ($status == 1)
-                {
-                    $msg = get_message('Successfully saved!!', '0');
-                    $this->session->set_flashdata('message', $msg);
-                }
-                else
-                {
-                    $msg = get_message('Failed to saved!!', '1');
-                    $this->session->set_flashdata('message', $msg);
-                }
-                redirect(base_url() . 'admin/add');
+            else
+            {
+                $msg = get_message('Failed to saved!!', '1');
+                $this->session->set_flashdata('message', $msg);
             }
+            redirect(base_url() . 'admin/add');
+            
         }
 
     }
 
      function Edit(){
-        $edit_id = url_decode($_GET['id']);
-        $data['id'] = $edit_id;
-        $where = array(
-                     'id' =>  $edit_id
-                );
-        $data['result'] = $this->Common_model->selectAll($this->admin_tbl,$where);
-        //echo $this->db->last_query(); exit;
-        $this->load->view('admin/common/header');
-        $this->load->view('admin/edit_admin', $data);
-        $this->load->view('admin/common/footer');
+      
+       if($this->input->post('id')){ //edit record save
+
+            $rules = $this->validation($this->input->post('id'));
+
+            $this->form_validation->set_rules($rules);
+
+            if ($this->form_validation->run() == false)
+            {
+             $msg = get_message(validation_errors(), '1');   
+             $this->session->set_flashdata('message', $msg );
+             redirect(base_url() . 'admin/edit?id=' . url_encode($this->input->post('id'))); 
+            }
+            else{
+
+            $edit_id = $this->input->post('id');
+
+            $where = array(
+                 'id' =>  $edit_id
+            );
+
+            $editdata =  array(
+            'firstname' => $this->input->post('firstname') ,
+            'lastname' => $this->input->post('lastname') ,
+            'admin_pass' => sha1($this->input->post('admin_pass')) ,
+            'confirm_pass' => sha1($this->input->post('confirm_pass')) ,
+            'role' => $this->input->post('role') ,
+            'admin_id' => $this->input->post('admin_id') ,
+            'phone' => $this->input->post('phone'));
+
+            $editstatus = $this->Common_model->update_batch($editdata,$this->admin_tbl,$where);
+
+            if($editstatus == 0){
+                 $msg = get_message('Error on Edit record!!', '1');
+            }
+            else{
+                 $msg = get_message('Successfully Edited!!', '0');
+            }
+           
+            $this->session->set_flashdata('message', $msg);
+
+            redirect(base_url() . 'admin/edit?id=' . url_encode($edit_id));
+            }
+         }
+         else{ // go edit page
+            $edit_id = url_decode($_GET['id']);
+            $data['id'] = $edit_id;
+            $where = array(
+                         'id' =>  $edit_id
+                    );
+            $data['result'] = $this->Common_model->selectAll($this->admin_tbl,$where);
+            //echo $this->db->last_query(); exit;
+            $this->load->view('admin/common/header');
+            $this->load->view('admin/edit_admin', $data);
+            $this->load->view('admin/common/footer');
+         }
+
     }
 
     function getlist(){

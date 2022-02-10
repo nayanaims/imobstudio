@@ -8,9 +8,15 @@ class Common_model extends CI_model{
 	}
 
 	public function update_batch($data,$tablename,$where){
-        $this->db->where($where);
-        $this->db->update($tablename,$data);
-        return 1;
+	   $this->db->db_debug = false;	
+       $this->db->where($where);
+       $res = $this->db->update($tablename,$data);
+	    if(!$res)
+		{
+		   return 0;
+		}else{
+		   return 1;
+		}
 	}
 
 	public function selectAll($tablename,$where){
