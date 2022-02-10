@@ -23,11 +23,11 @@
 						<tr>
 							<?php 
 							if(!empty($tabletile)) :
-							  foreach($tabletile as $title) : ?>
-								<th><?= $title; ?></th>
+							  foreach($tabletile as $key => $title) : ?>
+								<th class="th<?= $key; ?>"><?= $title; ?></th>
 							<?php 
 							   endforeach;
-						     endif; ?>
+						    endif; ?>
 						</tr>
 					</thead>
 					<tbody>						
@@ -41,7 +41,6 @@
 
 <script>
 $(document).ready(function() {
-	$('.admin_lists').dataTable().fnDestroy();
    $('.admin_lists').DataTable({
     'processing': true,
     'serverSide': true,
@@ -51,14 +50,6 @@ $(document).ready(function() {
         'url':  BaseUrl + "admin/getlist"
     },
     "deferRender": true,
-    'columns': [
-        {data: 'Email'},
-        {data: 'Name'},
-        {data: 'Phone'},
-        {data: 'Role'},
-        {data: 'Created Date'},
-        {data: 'Modified Date'}
-    ],
     "lengthChange": true,
     "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]],
     "order": [[1, "asc"]]

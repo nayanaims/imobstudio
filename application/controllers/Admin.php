@@ -17,7 +17,7 @@ class Admin extends CI_Controller
 
     public function index()
     {
-        $data['tabletile'] = array('Email','Name','Phone','Role','Created Date','Modified Date');
+        $data['tabletile'] = array('Email','Name','Phone','Role','Created Date','Modified Date','Action');
         $this->load->view('admin/common/header');
         $this->load->view('admin/admin_list',$data);
         $this->load->view('admin/common/footer');
@@ -93,21 +93,48 @@ class Admin extends CI_Controller
                 'admin_id' => $this->input->post('admin_id') ,
                 'phone' => $this->input->post('phone')
             );
-            $status = $this->Common_model->Insert_batch($data,$this->admin_tbl);
 
-            if ($status == 1)
-            {
+            if($this->input->post('id')){
+                $edit_id = url_decode($this->input->post('id'));
+                $where = array(
+                     'id' =>  $edit_id
+                );
+                $this->Common_model->update_batch($data,$this->admin_tbl,$where);
                 $msg = get_message('Successfully saved!!', '0');
                 $this->session->set_flashdata('message', $msg);
+                redirect(base_url() . 'admin/edit?id=' . url_encode($edit_id));
             }
-            else
-            {
-                $msg = get_message('Failed to saved!!', '1');
-                $this->session->set_flashdata('message', $msg);
+            else{
+           
+                $status = $this->Common_model->Insert_batch($data,$this->admin_tbl);
+
+                if ($status == 1)
+                {
+                    $msg = get_message('Successfully saved!!', '0');
+                    $this->session->set_flashdata('message', $msg);
+                }
+                else
+                {
+                    $msg = get_message('Failed to saved!!', '1');
+                    $this->session->set_flashdata('message', $msg);
+                }
+                redirect(base_url() . 'admin/add');
             }
-            redirect(base_url() . 'admin/add');
         }
 
+    }
+
+     function Edit(){
+        $edit_id = url_decode($_GET['id']);
+        $data['id'] = $edit_id;
+        $where = array(
+                     'id' =>  $edit_id
+                );
+        $data['result'] = $this->Common_model->selectAll($this->admin_tbl,$where);
+        //echo $this->db->last_query(); exit;
+        $this->load->view('admin/common/header');
+        $this->load->view('admin/edit_admin', $data);
+        $this->load->view('admin/common/footer');
     }
 
     function getlist(){
@@ -126,19 +153,23 @@ class Admin extends CI_Controller
             $orderby = 'ASC';
         }
         $orderfield = 'firstname';
-        $response = $this->Common_model->getDatatableData('*',$this->admin_tbl,$rowperpage,$start,$orderby,$orderfield,$searchField);
-        $countTotal = $this->Common_model->countDatatableTotal('id',$this->admin_tbl);
+        $where = array(
+                     'role !=' => 'super-admin' 
+                );
+        $response = $this->Common_model->getDatatableData('*',$this->admin_tbl,$rowperpage,$start,$orderby,$orderfield,$searchField,$where);
+        $countTotal = $this->Common_model->countDatatableTotal('id',$this->admin_tbl,$where);
 
         $data = array();
         if(!empty($response)){
             foreach($response as $result){
                 $data[] = array(
-                'Email'=> $result['admin_id'],
-                'Name' => $result['firstname'] . ' ' . @$result['lastname'],
-                'Phone' => $result['phone'],
-                'Role' => $result['role'],
-                'Created Date' => $result['created_date'],
-                'Modified Date' =>  $result['modified_date']
+                $result['admin_id'],
+                $result['firstname'] . ' ' . @$result['lastname'],
+                $result['phone'],
+                $result['role'],
+                $result['created_date'],
+                $result['modified_date'],
+                '<a href="'. base_url("admin/edit?id=") . url_encode($result['id']) . '" class="btn btn-primary" >Edit</a>'
             );
             }
         }
@@ -151,5 +182,8 @@ class Admin extends CI_Controller
         );
         echo json_encode($output); exit();
     }
+
+   
+
 }
 
