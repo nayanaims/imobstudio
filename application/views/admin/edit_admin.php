@@ -61,7 +61,7 @@
                            <div class="form-group row">
                               <label class="col-lg-3 col-form-label">Role</label>
                               <div class="col-lg-9">
-                              	<?php echo $result[0]['role']; ?>
+                              	
                                  <select class="select" name="role" >
                                     <option value>User Role</option>
                                     <option value="admin" <?php

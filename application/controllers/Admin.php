@@ -228,8 +228,8 @@ class Admin extends CI_Controller
 
         $output = array(
             "draw" => $draw,
-            "recordsTotal" => $countTotal,
-            "recordsFiltered" => count($data),
+            "recordsTotal" => count($data),
+            "recordsFiltered" => $countTotal,
             "data" => $data
         );
         echo json_encode($output); exit();
